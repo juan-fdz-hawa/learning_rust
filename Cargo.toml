@@ -7,6 +7,6 @@ edition = "2021"
 
 [workspace]
 members = [
-    "session_1/hello_world", "session_1/memory_semantics", 
+    "session_1/hello_world", "session_1/memory_semantics", "session_1/text_input", 
     "session_1/variables",
 ]

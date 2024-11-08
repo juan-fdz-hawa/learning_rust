@@ -15,5 +15,9 @@ name = "memory_semantics"
 version = "0.1.0"
 
 [[package]]
+name = "text_input"
+version = "0.1.0"
+
+[[package]]
 name = "variables"
 version = "0.1.0"
