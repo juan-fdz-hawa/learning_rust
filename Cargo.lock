@@ -3,5 +3,17 @@
 version = 3
 
 [[package]]
+name = "hello_world"
+version = "0.1.0"
+
+[[package]]
 name = "learning_rust"
+version = "0.1.0"
+
+[[package]]
+name = "memory_semantics"
+version = "0.1.0"
+
+[[package]]
+name = "variables"
 version = "0.1.0"
