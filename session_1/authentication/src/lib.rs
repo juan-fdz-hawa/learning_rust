@@ -1,4 +1,5 @@
-use std::{collections::HashMap, io::stdin};
+use serde::{Deserialize, Serialize};
+use std::{collections::HashMap, io::stdin, path::Path};
 
 // In rust everything is private by default ...
 // if we want this to be accessible outside this module we
@@ -10,7 +11,7 @@ pub fn greet_user(name: &str) -> String {
 // Use derive to tell Rust to automatically implement some traits
 // here Rust is "teaching" the enum type how to equate and how to
 // be debuggable.
-#[derive(PartialEq, Debug, Clone, Copy)]
+#[derive(PartialEq, Debug, Clone, Copy, Deserialize, Serialize)]
 pub enum LoginRole {
     Admin,
     User,
@@ -33,7 +34,8 @@ pub fn read_input() -> String {
 }
 
 // Struct fields are private by default ...
-#[derive(Clone)]
+// Deserialize, Serialize ... sick macros
+#[derive(Clone, Deserialize, Serialize)]
 pub struct User {
     pub username: String,
     pub password: String,
@@ -80,10 +82,19 @@ fn get_admin_usernames() -> Vec<String> {
 }
 
 fn get_users_map() -> HashMap<String, User> {
+    let users_path = Path::new("users.json");
     let mut hash_map = HashMap::new();
-    let users = get_users();
-    hash_map.insert(users[0].username.clone(), users[0].clone());
-    hash_map.insert(users[1].username.clone(), users[1].clone());
+
+    if users_path.exists() {
+        let users_json = std::fs::read_to_string(users_path).unwrap();
+        let users: Vec<User> = serde_json::from_str(&users_json).unwrap();
+        hash_map.insert(users[0].username.clone(), users[0].clone());
+        hash_map.insert(users[1].username.clone(), users[1].clone());
+    } else {
+        let users = get_users();
+        let users_json = serde_json::to_string(&users).expect("Could not serialize JSON");
+        std::fs::write(users_path, users_json).unwrap();
+    }
     hash_map
 }
 
