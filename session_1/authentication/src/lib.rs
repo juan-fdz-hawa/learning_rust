@@ -8,10 +8,10 @@ pub fn greet_user(name: &str) -> String {
 }
 
 // Use derive to tell Rust to automatically implement some traits
-// here Rust is "teaching" the enum type how to equate and how to 
+// here Rust is "teaching" the enum type how to equate and how to
 // be debuggable.
 #[derive(PartialEq, Debug, Clone, Copy)]
-pub enum LoginRole  {
+pub enum LoginRole {
     Admin,
     User,
 }
@@ -19,7 +19,7 @@ pub enum LoginRole  {
 #[derive(PartialEq, Debug)]
 pub enum LoginAction {
     Granted(LoginRole),
-    Denied
+    Denied,
 }
 
 pub fn read_input() -> String {
@@ -31,7 +31,6 @@ pub fn read_input() -> String {
 
     buffer.trim().to_string()
 }
-
 
 // Struct fields are private by default ...
 pub struct User {
@@ -46,13 +45,13 @@ impl User {
         Self {
             username: username.to_lowercase(),
             password: password.to_string(),
-            role
+            role,
         }
     }
 }
 
-fn get_users() -> [User; 2] {
-    [
+fn get_users() -> Vec<User> {
+    vec![
         User::new("admin", "password", LoginRole::Admin),
         User::new("bob", "password", LoginRole::User),
     ]
@@ -63,16 +62,24 @@ pub fn login(username: &str, password: &str) -> LoginAction {
 
     if let Some(user) = users
         .iter()
-        .find(|usr| usr.username == username && usr.password == password) {
-            return LoginAction::Granted(user.role)
-    } 
-
-        LoginAction::Denied
+        .find(|usr| usr.username == username && usr.password == password)
+    {
+        return LoginAction::Granted(user.role);
+    }
+    LoginAction::Denied
 }
 
+fn get_admin_usernames() -> Vec<String> {
+    // into_iter takes ownership of all elements of the vector
+    let users: Vec<String> = get_users()
+        .into_iter()
+        .filter(|u| u.role == LoginRole::Admin)
+        .map(|u| u.username)
+        .collect();
+    users
+}
 
-
-// #[cfg(..)] is a compiler directive 
+// #[cfg(..)] is a compiler directive
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -84,8 +91,14 @@ mod tests {
 
     #[test]
     fn test_login() {
-        assert_eq!(login("admin", "password"), LoginAction::Granted(LoginRole::Admin));
-        assert_eq!(login("bob", "password"), LoginAction::Granted(LoginRole::User));
-        assert_eq!(login("admin", "password2"), LoginAction::Denied);
+        assert_eq!(
+            login("admin", "password"),
+            LoginAction::Granted(LoginRole::Admin),
+        );
+        assert_eq!(
+            login("bob", "password"),
+            LoginAction::Granted(LoginRole::User),
+        );
+        assert_eq!(login("admin", "password2"), LoginAction::Denied,);
     }
 }
