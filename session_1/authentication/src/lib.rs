@@ -10,7 +10,7 @@ pub fn greet_user(name: &str) -> String {
 // Use derive to tell Rust to automatically implement some traits
 // here Rust is "teaching" the enum type how to equate and how to 
 // be debuggable.
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone, Copy)]
 pub enum LoginRole  {
     Admin,
     User,
@@ -22,16 +22,6 @@ pub enum LoginAction {
     Denied
 }
 
-pub fn login(username: &str, password: &str) -> LoginAction {
-    if username == "admin" && password == "password" {
-        LoginAction::Granted(LoginRole::Admin)
-    } else if username == "bob" && password == "password" {
-        LoginAction::Granted(LoginRole::User)
-    } else {
-        LoginAction::Denied
-    }
-}
-
 pub fn read_input() -> String {
     let mut buffer = String::new();
 
@@ -40,6 +30,44 @@ pub fn read_input() -> String {
         .expect("Can't read from stdin");
 
     buffer.trim().to_string()
+}
+
+
+// Struct fields are private by default ...
+pub struct User {
+    pub username: String,
+    pub password: String,
+    pub role: LoginRole,
+}
+
+impl User {
+    // 'Constructor'
+    pub fn new(username: &str, password: &str, role: LoginRole) -> Self {
+        Self {
+            username: username.to_lowercase(),
+            password: password.to_string(),
+            role
+        }
+    }
+}
+
+fn get_users() -> [User; 2] {
+    [
+        User::new("admin", "password", LoginRole::Admin),
+        User::new("bob", "password", LoginRole::User),
+    ]
+}
+
+pub fn login(username: &str, password: &str) -> LoginAction {
+    let users = get_users();
+
+    if let Some(user) = users
+        .iter()
+        .find(|usr| usr.username == username && usr.password == password) {
+            return LoginAction::Granted(user.role)
+    } 
+
+        LoginAction::Denied
 }
 
 
