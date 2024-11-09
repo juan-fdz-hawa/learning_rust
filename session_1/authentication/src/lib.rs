@@ -53,7 +53,7 @@ impl User {
     }
 }
 
-fn get_users() -> Vec<User> {
+pub fn get_users() -> Vec<User> {
     vec![
         User::new("admin", "password", LoginRole::Admin),
         User::new("bob", "password", LoginRole::User),
