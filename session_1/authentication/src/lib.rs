@@ -1,4 +1,4 @@
-use std::io::stdin;
+use std::{collections::HashMap, io::stdin};
 
 // In rust everything is private by default ...
 // if we want this to be accessible outside this module we
@@ -33,6 +33,7 @@ pub fn read_input() -> String {
 }
 
 // Struct fields are private by default ...
+#[derive(Clone)]
 pub struct User {
     pub username: String,
     pub password: String,
@@ -71,12 +72,19 @@ pub fn login(username: &str, password: &str) -> LoginAction {
 
 fn get_admin_usernames() -> Vec<String> {
     // into_iter takes ownership of all elements of the vector
-    let users: Vec<String> = get_users()
+    get_users()
         .into_iter()
         .filter(|u| u.role == LoginRole::Admin)
         .map(|u| u.username)
-        .collect();
-    users
+        .collect()
+}
+
+fn get_users_map() -> HashMap<String, User> {
+    let mut hash_map = HashMap::new();
+    let users = get_users();
+    hash_map.insert(users[0].username.clone(), users[0].clone());
+    hash_map.insert(users[1].username.clone(), users[1].clone());
+    hash_map
 }
 
 // #[cfg(..)] is a compiler directive
