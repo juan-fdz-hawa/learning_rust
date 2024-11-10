@@ -8,5 +8,5 @@ edition = "2021"
 [workspace]
 members = [ "session_1/authentication",
     "session_1/hello_world", "session_1/login", "session_1/login_manager", "session_1/memory_semantics", "session_1/text_input", 
-    "session_1/variables",
+    "session_1/variables", "session_2/atomic", "session_2/channels1", "session_2/dashing", "session_2/deadlock", "session_2/divide_work", "session_2/hello_thread", "session_2/mutexes", "session_2/rwlocks", "session_2/scoped_threads", "session_2/thread_builder",
 ]
